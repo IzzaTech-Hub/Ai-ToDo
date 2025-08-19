@@ -1,3 +1,4 @@
+import 'package:api_key_pool/api_key_pool.dart';
 import 'package:flutter/material.dart';
 // Removed speech-to-text imports as they're no longer needed
 // import 'package:speech_to_text/speech_recognition_result.dart';
@@ -102,7 +103,8 @@ class _AITaskCreationScreenState extends State<AITaskCreationScreen> {
     // Store the original user input to determine task type later
     _originalUserInput = userSpeech;
     
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
+    // final apiKey = dotenv.env['GEMINI_API_KEY'];
+    final apiKey = ApiKeyPool.getKey();
     if (apiKey == null || apiKey.isEmpty) {
       print('❌ API key not found'); // Debug log
       setState(() {

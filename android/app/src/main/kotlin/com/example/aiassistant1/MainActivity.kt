@@ -1,4 +1,4 @@
-package com.example.aiassistant1
+package com.example.ai_clever_todo
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
@@ -6,7 +6,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val NOTIFICATION_CHANNEL = "com.example.aiassistant1/notifications"
+    private val NOTIFICATION_CHANNEL = "com.example.ai_clever_todo/notifications"
     
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -35,22 +35,23 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper> {
     }
   }
 
-  void _listenToConnectivityChanges() {
-    _connectivityService.connectivityStream.listen((results) async {
+  void _listenToConnectivityChanges() async {
+    // _connectivityService.connectivityStream.listen((results) async {
+    // _connectivityService..listen((results) async {
       final hasConnection = await _connectivityService.hasInternetConnection();
       if (mounted && hasConnection != _isConnected) {
         setState(() {
           _isConnected = hasConnection;
         });
-        _connectivityService.showConnectivitySnackbar(context, hasConnection);
+        _connectivityService.showConnectionRestoredMessage(context);
       }
-    });
+    // });
   }
 
   Future<bool> validateConnectivity() async {
     final isConnected = await _connectivityService.hasInternetConnection();
     if (!isConnected) {
-      _connectivityService.showNoInternetDialog(context);
+      _connectivityService.showConnectionRestoredMessage(context);
       widget.onConnectivityRequired?.call();
     }
     return isConnected;

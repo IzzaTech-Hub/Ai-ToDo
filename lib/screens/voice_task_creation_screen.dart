@@ -1,3 +1,4 @@
+import 'package:api_key_pool/api_key_pool.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -5,15 +6,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
-import 'package:aiassistant1/models/task.dart';
-import 'package:aiassistant1/services/task_services.dart';
+import 'package:ai_clever_todo/models/task.dart';
+import 'package:ai_clever_todo/services/task_services.dart';
 import '../services/connectivity_service.dart';
 
 class VoiceTaskCreationScreen extends StatefulWidget {
   const VoiceTaskCreationScreen({super.key});
 
   @override
-  State<VoiceTaskCreationScreen> createState() => _VoiceTaskCreationScreenState();
+  State<VoiceTaskCreationScreen> createState() =>
+      _VoiceTaskCreationScreenState();
 }
 
 class _VoiceTaskCreationScreenState extends State<VoiceTaskCreationScreen> {
@@ -66,7 +68,7 @@ class _VoiceTaskCreationScreenState extends State<VoiceTaskCreationScreen> {
       _wordsSpoken = "";
       _parsedResponse = null;
     });
-    
+
     await _speechToText.listen(
       onResult: _onSpeechResult,
       listenFor: const Duration(seconds: 15),
@@ -106,7 +108,7 @@ class _VoiceTaskCreationScreenState extends State<VoiceTaskCreationScreen> {
 
   Future<void> _getGeminiResponse(String userSpeech) async {
     print('🤖 Starting AI processing for voice input: "$userSpeech"');
-    
+
     // Check internet connection BEFORE making API call
     setState(() {
       _isCheckingConnection = true;
@@ -128,7 +130,8 @@ class _VoiceTaskCreationScreenState extends State<VoiceTaskCreationScreen> {
       return;
     }
 
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
+    final apiKey = ApiKeyPool.getKey();
+    // final apiKey = dotenv.env['GEMINI_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
       print('❌ API key not found');
       setState(() {
@@ -137,7 +140,9 @@ class _VoiceTaskCreationScreenState extends State<VoiceTaskCreationScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Error: API key not found. Please check your .env file.'),
+            content: Text(
+              'Error: API key not found. Please check your .env file.',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -193,10 +198,7 @@ User said: "$userSpeech"
                   ],
                 },
               ],
-              "generationConfig": {
-                "temperature": 0.3,
-                "maxOutputTokens": 300,
-              },
+              "generationConfig": {"temperature": 0.3, "maxOutputTokens": 300},
             }),
           )
           .timeout(const Duration(seconds: 30));
@@ -212,13 +214,11 @@ User said: "$userSpeech"
         print('🔍 AI Response: $aiResponse');
 
         try {
-          final cleanedResponse = aiResponse
-              .replaceAll('```json', '')
-              .replaceAll('```', '')
-              .trim();
+          final cleanedResponse =
+              aiResponse.replaceAll('```json', '').replaceAll('```', '').trim();
 
           print('🧹 Cleaned Response: $cleanedResponse');
-          
+
           _parsedResponse = jsonDecode(cleanedResponse);
           print('📝 Parsed Response: $_parsedResponse');
 
@@ -240,7 +240,9 @@ User said: "$userSpeech"
           };
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error parsing response: ${e.toString()}')),
+              SnackBar(
+                content: Text('Error parsing response: ${e.toString()}'),
+              ),
             );
           }
         }
@@ -262,9 +264,9 @@ User said: "$userSpeech"
           _isProcessing = false;
         });
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${e.toString()}')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
         }
       }
     }
@@ -293,9 +295,9 @@ User said: "$userSpeech"
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                isLike 
-                  ? 'Thanks for the positive feedback! 👍'
-                  : 'Thanks for the feedback. We\'ll improve! 👎',
+                isLike
+                    ? 'Thanks for the positive feedback! 👍'
+                    : 'Thanks for the feedback. We\'ll improve! 👎',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -319,7 +321,7 @@ User said: "$userSpeech"
 
   Future<void> _saveTask() async {
     print('💾 Voice _saveTask called, _parsedResponse: $_parsedResponse');
-    
+
     if (_parsedResponse == null) {
       print('❌ _parsedResponse is null, cannot save task');
       return;
@@ -334,7 +336,7 @@ User said: "$userSpeech"
     try {
       // Parse date and time
       DateTime dueDate = DateTime.now().add(const Duration(days: 1));
-      
+
       if (_parsedResponse!['due_date'] != 'unknown') {
         try {
           final parts = _parsedResponse!['due_date'].split('-');
@@ -355,7 +357,12 @@ User said: "$userSpeech"
             }
 
             // Validate date
-            if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2000 && year <= 2100) {
+            if (day >= 1 &&
+                day <= 31 &&
+                month >= 1 &&
+                month <= 12 &&
+                year >= 2000 &&
+                year <= 2100) {
               dueDate = DateTime(year, month, day, hour, minute);
             }
           }
@@ -365,11 +372,12 @@ User said: "$userSpeech"
       }
 
       final taskService = TaskService();
-      
+
       // Determine if this is a reminder based on the original user input
-      final isReminderTask = _originalUserInput.toLowerCase().contains('remind') || 
-                            _originalUserInput.toLowerCase().contains('reminder');
-      
+      final isReminderTask =
+          _originalUserInput.toLowerCase().contains('remind') ||
+          _originalUserInput.toLowerCase().contains('reminder');
+
       final task = Task(
         title: _parsedResponse!['task'].toString(),
         description: null,
@@ -385,11 +393,17 @@ User said: "$userSpeech"
 
       print('🚀 About to create voice task: ${task.title}');
       print('   Original voice input: "$_originalUserInput"');
-      print('   Task details: title="${task.title}", category="${task.category}", dueDate=${task.dueDate}');
-      print('   Task flags: isArchived=${task.isArchived}, isCompleted=${task.isCompleted}, isReminder=${task.isReminder}');
+      print(
+        '   Task details: title="${task.title}", category="${task.category}", dueDate=${task.dueDate}',
+      );
+      print(
+        '   Task flags: isArchived=${task.isArchived}, isCompleted=${task.isCompleted}, isReminder=${task.isReminder}',
+      );
 
       final createdTask = await taskService.createTask(task);
-      print('✅ Voice Task created successfully: ${createdTask.title} with ID: ${createdTask.id}');
+      print(
+        '✅ Voice Task created successfully: ${createdTask.title} with ID: ${createdTask.id}',
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -400,9 +414,9 @@ User said: "$userSpeech"
     } catch (e) {
       print('❌ Error saving voice task: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save task: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to save task: $e')));
       }
     } finally {
       setState(() {
@@ -424,16 +438,9 @@ User said: "$userSpeech"
             decoration: BoxDecoration(
               color: Colors.red.withOpacity(0.1),
               borderRadius: BorderRadius.circular(50),
-              border: Border.all(
-                color: Colors.red.withOpacity(0.3),
-                width: 2,
-              ),
+              border: Border.all(color: Colors.red.withOpacity(0.3), width: 2),
             ),
-            child: const Icon(
-              Icons.mic,
-              size: 48,
-              color: Colors.red,
-            ),
+            child: const Icon(Icons.mic, size: 48, color: Colors.red),
           ),
         );
       },
@@ -451,20 +458,13 @@ User said: "$userSpeech"
       decoration: BoxDecoration(
         color: const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.grey[200]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[200]!, width: 1),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              Icon(
-                Icons.format_quote,
-                color: Colors.grey[500],
-                size: 16,
-              ),
+              Icon(Icons.format_quote, color: Colors.grey[500], size: 16),
               const SizedBox(width: 8),
               Text(
                 'What you\'re saying:',
@@ -483,7 +483,8 @@ User said: "$userSpeech"
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: _wordsSpoken.isEmpty ? Colors.grey[500] : Colors.black87,
-              fontStyle: _wordsSpoken.isEmpty ? FontStyle.italic : FontStyle.normal,
+              fontStyle:
+                  _wordsSpoken.isEmpty ? FontStyle.italic : FontStyle.normal,
             ),
             textAlign: TextAlign.center,
           ),
@@ -503,18 +504,11 @@ User said: "$userSpeech"
             color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: const Icon(
-            Icons.stop,
-            size: 18,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.stop, size: 18, color: Colors.white),
         ),
         label: const Text(
           'Stop Listening',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
@@ -550,15 +544,13 @@ User said: "$userSpeech"
                 child: CircularProgressIndicator(
                   value: value,
                   strokeWidth: 4,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Colors.deepPurple,
+                  ),
                   backgroundColor: Colors.deepPurple.withOpacity(0.2),
                 ),
               ),
-              const Icon(
-                Icons.psychology,
-                size: 30,
-                color: Colors.deepPurple,
-              ),
+              const Icon(Icons.psychology, size: 30, color: Colors.deepPurple),
             ],
           ),
         );
@@ -576,18 +568,11 @@ User said: "$userSpeech"
       decoration: BoxDecoration(
         color: Colors.deepPurple.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.deepPurple.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.deepPurple.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.format_quote,
-            color: Colors.deepPurple,
-            size: 20,
-          ),
+          Icon(Icons.format_quote, color: Colors.deepPurple, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -629,10 +614,7 @@ User said: "$userSpeech"
       decoration: BoxDecoration(
         color: const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.grey[200]!,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey[200]!, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,22 +645,34 @@ User said: "$userSpeech"
             ],
           ),
           const SizedBox(height: 16),
-          _buildModernPreviewRow('Title', _parsedResponse!['task'] ?? '', Icons.title),
-          _buildModernPreviewRow('Due Date', _parsedResponse!['due_date'] ?? '', Icons.calendar_today),
-          _buildModernPreviewRow('Due Time', _parsedResponse!['due_time'] ?? 'Not specified', Icons.access_time),
-          _buildModernPreviewRow('Category', _parsedResponse!['category'] ?? '', Icons.category),
-          
+          _buildModernPreviewRow(
+            'Title',
+            _parsedResponse!['task'] ?? '',
+            Icons.title,
+          ),
+          _buildModernPreviewRow(
+            'Due Date',
+            _parsedResponse!['due_date'] ?? '',
+            Icons.calendar_today,
+          ),
+          _buildModernPreviewRow(
+            'Due Time',
+            _parsedResponse!['due_time'] ?? 'Not specified',
+            Icons.access_time,
+          ),
+          _buildModernPreviewRow(
+            'Category',
+            _parsedResponse!['category'] ?? '',
+            Icons.category,
+          ),
+
           // Feedback section
           const SizedBox(height: 20),
           const Divider(color: Colors.grey),
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(
-                Icons.feedback_outlined,
-                size: 16,
-                color: Colors.grey,
-              ),
+              const Icon(Icons.feedback_outlined, size: 16, color: Colors.grey),
               const SizedBox(width: 8),
               Text(
                 'How is this AI response?',
@@ -704,12 +698,21 @@ User said: "$userSpeech"
                   },
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: _userFeedback == 'like' ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.05),
+                      color:
+                          _userFeedback == 'like'
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.grey.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: _userFeedback == 'like' ? Colors.green : Colors.grey.withOpacity(0.3),
+                        color:
+                            _userFeedback == 'like'
+                                ? Colors.green
+                                : Colors.grey.withOpacity(0.3),
                         width: 1,
                       ),
                     ),
@@ -720,7 +723,10 @@ User said: "$userSpeech"
                         Icon(
                           Icons.thumb_up_outlined,
                           size: 16,
-                          color: _userFeedback == 'like' ? Colors.green : Colors.grey[600],
+                          color:
+                              _userFeedback == 'like'
+                                  ? Colors.green
+                                  : Colors.grey[600],
                         ),
                         const SizedBox(width: 4),
                         Flexible(
@@ -729,7 +735,10 @@ User said: "$userSpeech"
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: _userFeedback == 'like' ? Colors.green : Colors.grey[600],
+                              color:
+                                  _userFeedback == 'like'
+                                      ? Colors.green
+                                      : Colors.grey[600],
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -751,12 +760,21 @@ User said: "$userSpeech"
                   },
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: _userFeedback == 'dislike' ? Colors.red.withOpacity(0.1) : Colors.grey.withOpacity(0.05),
+                      color:
+                          _userFeedback == 'dislike'
+                              ? Colors.red.withOpacity(0.1)
+                              : Colors.grey.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: _userFeedback == 'dislike' ? Colors.red : Colors.grey.withOpacity(0.3),
+                        color:
+                            _userFeedback == 'dislike'
+                                ? Colors.red
+                                : Colors.grey.withOpacity(0.3),
                         width: 1,
                       ),
                     ),
@@ -767,7 +785,10 @@ User said: "$userSpeech"
                         Icon(
                           Icons.thumb_down_outlined,
                           size: 16,
-                          color: _userFeedback == 'dislike' ? Colors.red : Colors.grey[600],
+                          color:
+                              _userFeedback == 'dislike'
+                                  ? Colors.red
+                                  : Colors.grey[600],
                         ),
                         const SizedBox(width: 4),
                         Flexible(
@@ -776,7 +797,10 @@ User said: "$userSpeech"
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: _userFeedback == 'dislike' ? Colors.red : Colors.grey[600],
+                              color:
+                                  _userFeedback == 'dislike'
+                                      ? Colors.red
+                                      : Colors.grey[600],
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -798,11 +822,7 @@ User said: "$userSpeech"
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: Colors.grey[600],
-          ),
+          Icon(icon, size: 16, color: Colors.grey[600]),
           const SizedBox(width: 12),
           SizedBox(
             width: 80,
@@ -837,33 +857,31 @@ User said: "$userSpeech"
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: _isSaving ? null : _saveTask,
-            icon: _isSaving
-                ? SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            icon:
+                _isSaving
+                    ? SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Icon(
+                        Icons.save,
+                        size: 16,
+                        color: Colors.white,
+                      ),
                     ),
-                  )
-                : Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Icon(
-                      Icons.save,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                  ),
             label: Text(
               _isSaving ? 'Saving Task...' : 'Save Task',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.deepPurple,
@@ -882,16 +900,10 @@ User said: "$userSpeech"
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: _isSaving ? null : _tryAgain,
-            icon: const Icon(
-              Icons.refresh,
-              size: 18,
-            ),
+            icon: const Icon(Icons.refresh, size: 18),
             label: const Text(
               'Try Again',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.grey[700],
@@ -914,11 +926,7 @@ User said: "$userSpeech"
         color: Colors.deepPurple.withOpacity(0.1),
         borderRadius: BorderRadius.circular(50),
       ),
-      child: const Icon(
-        Icons.mic_none,
-        size: 48,
-        color: Colors.deepPurple,
-      ),
+      child: const Icon(Icons.mic_none, size: 48, color: Colors.deepPurple),
     );
   }
 
@@ -933,18 +941,11 @@ User said: "$userSpeech"
             color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(6),
           ),
-          child: const Icon(
-            Icons.mic,
-            size: 20,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.mic, size: 20, color: Colors.white),
         ),
         label: const Text(
           'Start Voice Input',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.deepPurple,
@@ -967,21 +968,14 @@ User said: "$userSpeech"
       decoration: BoxDecoration(
         color: Colors.blue.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.blue.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.blue.withOpacity(0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.lightbulb_outline,
-                color: Colors.blue[600],
-                size: 16,
-              ),
+              Icon(Icons.lightbulb_outline, color: Colors.blue[600], size: 16),
               const SizedBox(width: 8),
               Text(
                 'Tips for better results:',
@@ -1014,10 +1008,7 @@ User said: "$userSpeech"
       appBar: AppBar(
         title: const Text(
           'Voice Task Creator',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
@@ -1037,10 +1028,7 @@ User said: "$userSpeech"
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Colors.deepPurple,
-                  Color(0xFF7B1FA2),
-                ],
+                colors: [Colors.deepPurple, Color(0xFF7B1FA2)],
               ),
             ),
             child: Column(
@@ -1063,7 +1051,9 @@ User said: "$userSpeech"
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         ),
                         SizedBox(width: 8),
@@ -1107,7 +1097,7 @@ User said: "$userSpeech"
               ],
             ),
           ),
-          
+
           // Main Content
           Expanded(
             child: Transform.translate(
@@ -1126,7 +1116,7 @@ User said: "$userSpeech"
                   child: Column(
                     children: [
                       const SizedBox(height: 20),
-                      
+
                       // Main Content Card
                       Container(
                         width: double.infinity,
@@ -1144,7 +1134,7 @@ User said: "$userSpeech"
                         ),
                         child: _buildMainContent(),
                       ),
-                      
+
                       const SizedBox(height: 30),
                     ],
                   ),
@@ -1189,10 +1179,7 @@ User said: "$userSpeech"
           const SizedBox(height: 8),
           Text(
             'Speak clearly about your task',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 24),
           _buildSpeechContainer(),
@@ -1201,7 +1188,6 @@ User said: "$userSpeech"
         ],
       );
     }
-    
     // Processing state
     else if (_isProcessing) {
       return Column(
@@ -1219,17 +1205,13 @@ User said: "$userSpeech"
           const SizedBox(height: 8),
           Text(
             'Analyzing what you said',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
           _buildQuoteContainer(),
         ],
       );
     }
-    
     // Task preview state
     else if (_parsedResponse != null) {
       return Column(
@@ -1247,10 +1229,7 @@ User said: "$userSpeech"
           const SizedBox(height: 8),
           Text(
             'Review and save your task',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 24),
           _buildModernTaskPreview(),
@@ -1259,7 +1238,6 @@ User said: "$userSpeech"
         ],
       );
     }
-    
     // Initial/Ready state
     else {
       return Column(
@@ -1277,10 +1255,7 @@ User said: "$userSpeech"
           const SizedBox(height: 8),
           Text(
             'Tap the button and describe your task',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
           ),
           const SizedBox(height: 32),
           _buildStartButton(),

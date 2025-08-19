@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.aiassistant1"
+    namespace = "com.example.ai_clever_todo"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.13113456"
 
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.aiassistant1"
+        applicationId = "com.example.ai_clever_todo"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

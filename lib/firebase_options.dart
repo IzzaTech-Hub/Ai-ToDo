@@ -64,8 +64,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '126453952717',
     projectId: 'ai-todolist-36a96',
     storageBucket: 'ai-todolist-36a96.firebasestorage.app',
-    iosClientId: '126453952717-dbdfdlgcfueoj7piasjna7nkdgk6obmk.apps.googleusercontent.com',
-    iosBundleId: 'com.example.aiassistant1',
+    iosClientId:
+        '126453952717-dbdfdlgcfueoj7piasjna7nkdgk6obmk.apps.googleusercontent.com',
+    iosBundleId: 'com.example.ai_clever_todo',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -74,8 +75,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '126453952717',
     projectId: 'ai-todolist-36a96',
     storageBucket: 'ai-todolist-36a96.firebasestorage.app',
-    iosClientId: '126453952717-dbdfdlgcfueoj7piasjna7nkdgk6obmk.apps.googleusercontent.com',
-    iosBundleId: 'com.example.aiassistant1',
+    iosClientId:
+        '126453952717-dbdfdlgcfueoj7piasjna7nkdgk6obmk.apps.googleusercontent.com',
+    iosBundleId: 'com.example.ai_clever_todo',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -87,5 +89,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'ai-todolist-36a96.firebasestorage.app',
     measurementId: 'G-03313FVY1X',
   );
-
 }

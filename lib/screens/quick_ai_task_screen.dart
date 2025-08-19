@@ -1,3 +1,4 @@
+import 'package:api_key_pool/api_key_pool.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -122,7 +123,8 @@ class _QuickAITaskScreenState extends State<QuickAITaskScreen> {
         _isProcessing = true;
       });
 
-      final apiKey = dotenv.env['GEMINI_API_KEY'];
+    final apiKey = ApiKeyPool.getKey();
+      // final apiKey = dotenv.env['GEMINI_API_KEY'];
       if (apiKey == null || apiKey.isEmpty) {
         throw Exception('API key not found. Please check your .env file.');
       }

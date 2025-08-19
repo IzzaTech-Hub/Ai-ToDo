@@ -1,18 +1,20 @@
-import 'package:aiassistant1/models/task.dart';
-import 'package:aiassistant1/services/task_notification_service.dart';
+import 'package:ai_clever_todo/models/task.dart';
+import 'package:ai_clever_todo/services/task_notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 
 class TaskNotificationIntegration {
-  static final TaskNotificationIntegration _instance = TaskNotificationIntegration._internal();
+  static final TaskNotificationIntegration _instance =
+      TaskNotificationIntegration._internal();
   factory TaskNotificationIntegration() => _instance;
   TaskNotificationIntegration._internal();
 
-  final TaskNotificationService _notificationService = TaskNotificationService();
+  final TaskNotificationService _notificationService =
+      TaskNotificationService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   StreamSubscription<QuerySnapshot>? _taskStreamSubscription;
   Timer? _overdueCheckTimer;
 
@@ -50,12 +52,14 @@ class TaskNotificationIntegration {
 
   /// Handle task document changes
   Future<void> _handleTaskChanges(QuerySnapshot snapshot) async {
-    print('TaskNotificationIntegration: Processing ${snapshot.docs.length} tasks');
-    
+    print(
+      'TaskNotificationIntegration: Processing ${snapshot.docs.length} tasks',
+    );
+
     for (DocumentChange change in snapshot.docChanges) {
       final taskData = change.doc.data() as Map<String, dynamic>;
       final task = Task.fromMap(change.doc.id, taskData);
-      
+
       switch (change.type) {
         case DocumentChangeType.added:
         case DocumentChangeType.modified:

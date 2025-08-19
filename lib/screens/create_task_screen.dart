@@ -1,20 +1,20 @@
-import 'package:aiassistant1/screens/subtask_screen.dart';
+import 'package:ai_clever_todo/screens/subtask_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:aiassistant1/models/task.dart';
-import 'package:aiassistant1/services/task_services.dart';
+import 'package:ai_clever_todo/models/task.dart';
+import 'package:ai_clever_todo/services/task_services.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 // import 'package:permission_handler/permission_handler.dart';
-import 'package:aiassistant1/models/subtask.dart';
+import 'package:ai_clever_todo/models/subtask.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   final Task? task;
   final DateTime? initialDate;
   final Map<String, dynamic>? aiGeneratedData;
-  
+
   const CreateTaskScreen({
-    super.key, 
-    this.task, 
+    super.key,
+    this.task,
     this.initialDate,
     this.aiGeneratedData,
   });
@@ -58,21 +58,26 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       _selectedCategory = widget.task!.category;
       _selectedPriority = widget.task!.priority;
       _isReminder = widget.task!.isReminder;
-      _subtasks = List.from(widget.task!.subtasks); // Initialize with existing subtasks
+      _subtasks = List.from(
+        widget.task!.subtasks,
+      ); // Initialize with existing subtasks
       _updateAppBarColor();
     } else if (widget.aiGeneratedData != null) {
       // Creating new task with AI-generated data
       final aiData = widget.aiGeneratedData!;
       _titleController.text = aiData['title'] ?? '';
       _descriptionController.text = aiData['description'] ?? '';
-      _dueDate = aiData['due_date'] ?? DateTime.now().add(const Duration(days: 1));
+      _dueDate =
+          aiData['due_date'] ?? DateTime.now().add(const Duration(days: 1));
       _selectedCategory = aiData['category'] ?? 'other';
-      _selectedPriority = _stringToPriority(aiData['priority']) ?? TaskPriority.medium;
+      _selectedPriority =
+          _stringToPriority(aiData['priority']) ?? TaskPriority.medium;
       _isReminder = aiData['is_reminder'] ?? false;
       _updateAppBarColor();
     } else {
       // Creating new task without AI data
-      _dueDate = widget.initialDate ?? DateTime.now().add(const Duration(days: 1));
+      _dueDate =
+          widget.initialDate ?? DateTime.now().add(const Duration(days: 1));
       // Initialize time to midnight for new tasks if no initialDate is provided with time
       _dueDate = DateTime(_dueDate.year, _dueDate.month, _dueDate.day, 0, 0);
       _updateAppBarColor();
@@ -206,7 +211,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Cannot set reminder for past date/time. Please select a future time.'),
+                  content: Text(
+                    'Cannot set reminder for past date/time. Please select a future time.',
+                  ),
                   backgroundColor: Colors.orange,
                   behavior: SnackBarBehavior.fixed,
                   shape: RoundedRectangleBorder(
@@ -223,7 +230,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             });
             return;
           }
-          
+
           // Exact alarm permission request disabled for demo release
         }
         if (widget.task == null) {
@@ -231,21 +238,25 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           await taskService.createTask(task);
           // Note: TaskNotificationIntegration automatically handles notification scheduling
           // via Firestore listeners - no manual scheduling needed
-          
+
           // Debug: Log task creation details
           print('🚀 Task created successfully:');
           print('  - Title: ${task.title}');
           print('  - Due Date: ${task.dueDate}');
           print('  - Is Reminder: ${task.isReminder}');
           print('  - Current Time: ${DateTime.now()}');
-          print('  - Time until due: ${task.dueDate.difference(DateTime.now()).inMinutes} minutes');
-          
+          print(
+            '  - Time until due: ${task.dueDate.difference(DateTime.now()).inMinutes} minutes',
+          );
+
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(task.isReminder 
-                  ? 'Task created with reminder set for ${DateFormat('MMM dd, h:mm a').format(task.dueDate)}!' 
-                  : 'Task created successfully!'),
+                content: Text(
+                  task.isReminder
+                      ? 'Task created with reminder set for ${DateFormat('MMM dd, h:mm a').format(task.dueDate)}!'
+                      : 'Task created successfully!',
+                ),
                 behavior: SnackBarBehavior.fixed,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -261,21 +272,25 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           await taskService.updateTask(task);
           // Note: TaskNotificationIntegration automatically handles notification scheduling
           // via Firestore listeners - no manual scheduling needed
-          
+
           // Debug: Log task update details
           print('🔄 Task updated successfully:');
           print('  - Title: ${task.title}');
           print('  - Due Date: ${task.dueDate}');
           print('  - Is Reminder: ${task.isReminder}');
           print('  - Current Time: ${DateTime.now()}');
-          print('  - Time until due: ${task.dueDate.difference(DateTime.now()).inMinutes} minutes');
-          
+          print(
+            '  - Time until due: ${task.dueDate.difference(DateTime.now()).inMinutes} minutes',
+          );
+
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(task.isReminder 
-                  ? 'Task updated with reminder set for ${DateFormat('MMM dd, h:mm a').format(task.dueDate)}!' 
-                  : 'Task updated successfully!'),
+                content: Text(
+                  task.isReminder
+                      ? 'Task updated with reminder set for ${DateFormat('MMM dd, h:mm a').format(task.dueDate)}!'
+                      : 'Task updated successfully!',
+                ),
                 behavior: SnackBarBehavior.fixed,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -292,18 +307,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(
-            content: Text('Failed to save task: $e'),
-            behavior: SnackBarBehavior.fixed,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to save task: $e'),
+              behavior: SnackBarBehavior.fixed,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
               ),
             ),
-          ));
+          );
         }
       } finally {
         setState(() {
@@ -317,7 +332,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -340,23 +355,24 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveTask,
-            child: _isLoading
-                ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(_appBarColor),
+            child:
+                _isLoading
+                    ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(_appBarColor),
+                      ),
+                    )
+                    : Text(
+                      widget.task == null ? 'Create' : 'Save',
+                      style: TextStyle(
+                        color: _appBarColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  )
-                : Text(
-                    widget.task == null ? 'Create' : 'Save',
-                    style: TextStyle(
-                      color: _appBarColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
           ),
           const SizedBox(width: 16),
         ],
@@ -372,7 +388,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   // Task Title Input
                   Text(
                     'What needs to be done?',
@@ -382,104 +397,23 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       color: colorScheme.onSurface,
                     ),
                   ),
-                const SizedBox(height: 12),
-                _buildSimpleTextField(
-                  controller: _titleController,
-                  hintText: 'Enter task title...',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a task title';
-                    }
-                    return null;
-                  },
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // Description Input
-                Text(
-                  'Add details (optional)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
+                  const SizedBox(height: 12),
+                  _buildSimpleTextField(
+                    controller: _titleController,
+                    hintText: 'Enter task title...',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a task title';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                const SizedBox(height: 12),
-                _buildSimpleTextField(
-                  controller: _descriptionController,
-                  hintText: 'Add more details about your task...',
-                  maxLines: 3,
-                  isOptional: true,
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // Date & Time
-                Text(
-                  'When is this due?',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _buildSimpleDateSelector(),
-                
-                const SizedBox(height: 24),
-                
-                // Category & Priority Row
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Category',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildSimpleCategorySelector(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Priority',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildSimplePrioritySelector(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // Reminder Toggle
-                _buildSimpleReminderToggle(),
-                
-                // Subtasks Section (if editing existing task)
-                if (widget.task != null && widget.task!.subtasks.isNotEmpty) ...[
+
                   const SizedBox(height: 32),
+
+                  // Description Input
                   Text(
-                    'Subtasks',
+                    'Add details (optional)',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -487,22 +421,106 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  ...widget.task!.subtasks.map((subtask) => _buildSimpleSubtaskTile(subtask)),
-                ],
-                
-                // Add Subtasks Button (only when creating new task)
-                if (widget.task == null) ...[
+                  _buildSimpleTextField(
+                    controller: _descriptionController,
+                    hintText: 'Add more details about your task...',
+                    maxLines: 3,
+                    isOptional: true,
+                  ),
+
                   const SizedBox(height: 32),
-                  _buildSimpleAddSubtasksButton(),
+
+                  // Date & Time
+                  Text(
+                    'When is this due?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSimpleDateSelector(),
+
+                  const SizedBox(height: 24),
+
+                  // Category & Priority Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Category',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildSimpleCategorySelector(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Priority',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _buildSimplePrioritySelector(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Reminder Toggle
+                  _buildSimpleReminderToggle(),
+
+                  // Subtasks Section (if editing existing task)
+                  if (widget.task != null &&
+                      widget.task!.subtasks.isNotEmpty) ...[
+                    const SizedBox(height: 32),
+                    Text(
+                      'Subtasks',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ...widget.task!.subtasks.map(
+                      (subtask) => _buildSimpleSubtaskTile(subtask),
+                    ),
+                  ],
+
+                  // Add Subtasks Button (only when creating new task)
+                  if (widget.task == null) ...[
+                    const SizedBox(height: 32),
+                    _buildSimpleAddSubtasksButton(),
+                  ],
+
+                  const SizedBox(height: 60),
                 ],
-                
-                const SizedBox(height: 60),
-              ],
+              ),
             ),
           ),
         ),
       ),
-      )
     );
   }
 
@@ -517,13 +535,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? colorScheme.surfaceVariant.withOpacity(0.3) : const Color(0xFFF8F9FA),
+        color:
+            isDark
+                ? colorScheme.surfaceVariant.withOpacity(0.3)
+                : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
+          color:
+              isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
           width: 1,
         ),
       ),
@@ -567,13 +589,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? colorScheme.surfaceVariant.withOpacity(0.3) : const Color(0xFFF8F9FA),
+        color:
+            isDark
+                ? colorScheme.surfaceVariant.withOpacity(0.3)
+                : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
+          color:
+              isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
           width: 1,
         ),
       ),
@@ -619,13 +645,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? colorScheme.surfaceVariant.withOpacity(0.3) : const Color(0xFFF8F9FA),
+        color:
+            isDark
+                ? colorScheme.surfaceVariant.withOpacity(0.3)
+                : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
+          color:
+              isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
           width: 1,
         ),
       ),
@@ -635,7 +665,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
         value: _selectedCategory,
-        hint: Text('Select', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.5))),
+        hint: Text(
+          'Select',
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.5)),
+        ),
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -646,31 +679,32 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           color: colorScheme.onSurface.withOpacity(0.6),
         ),
         isExpanded: true,
-        items: _categories.map((String category) {
-          return DropdownMenuItem<String>(
-            value: category,
-            child: Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: _getCategoryColor(category),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+        items:
+            _categories.map((String category) {
+              return DropdownMenuItem<String>(
+                value: category,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor(category),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        category[0].toUpperCase() + category.substring(1),
+                        style: const TextStyle(fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    category[0].toUpperCase() + category.substring(1),
-                    style: const TextStyle(fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
         onChanged: (String? newValue) {
           if (newValue != null) {
             setState(() {
@@ -687,13 +721,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? colorScheme.surfaceVariant.withOpacity(0.3) : const Color(0xFFF8F9FA),
+        color:
+            isDark
+                ? colorScheme.surfaceVariant.withOpacity(0.3)
+                : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
+          color:
+              isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
           width: 1,
         ),
       ),
@@ -703,7 +741,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
         value: _selectedPriority,
-        hint: Text('Select', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.5))),
+        hint: Text(
+          'Select',
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.5)),
+        ),
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -714,31 +755,32 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           color: colorScheme.onSurface.withOpacity(0.6),
         ),
         isExpanded: true,
-        items: TaskPriority.values.map((TaskPriority priority) {
-          return DropdownMenuItem<TaskPriority>(
-            value: priority,
-            child: Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: _getPriorityColor(priority),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+        items:
+            TaskPriority.values.map((TaskPriority priority) {
+              return DropdownMenuItem<TaskPriority>(
+                value: priority,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: _getPriorityColor(priority),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        priority.toString().split('.').last.toUpperCase(),
+                        style: const TextStyle(fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    priority.toString().split('.').last.toUpperCase(),
-                    style: const TextStyle(fontSize: 14),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
         onChanged: (TaskPriority? newValue) {
           if (newValue != null) {
             setState(() {
@@ -755,13 +797,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? colorScheme.surfaceVariant.withOpacity(0.3) : const Color(0xFFF8F9FA),
+        color:
+            isDark
+                ? colorScheme.surfaceVariant.withOpacity(0.3)
+                : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
+          color:
+              isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
           width: 1,
         ),
       ),
@@ -770,8 +816,13 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         child: Row(
           children: [
             Icon(
-              _isReminder ? Icons.notifications_active : Icons.notifications_off_outlined,
-              color: _isReminder ? _appBarColor : colorScheme.onSurface.withOpacity(0.6),
+              _isReminder
+                  ? Icons.notifications_active
+                  : Icons.notifications_off_outlined,
+              color:
+                  _isReminder
+                      ? _appBarColor
+                      : colorScheme.onSurface.withOpacity(0.6),
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -804,15 +855,19 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? colorScheme.surfaceVariant.withOpacity(0.3) : const Color(0xFFF8F9FA),
+        color:
+            isDark
+                ? colorScheme.surfaceVariant.withOpacity(0.3)
+                : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
+          color:
+              isDark ? colorScheme.outline.withOpacity(0.3) : Colors.grey[200]!,
           width: 1,
         ),
       ),
@@ -859,10 +914,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SubtaskScreen(
-                existingSubtasks: _subtasks,
-                isEditMode: isEditMode,
-              ),
+              builder:
+                  (context) => SubtaskScreen(
+                    existingSubtasks: _subtasks,
+                    isEditMode: isEditMode,
+                  ),
             ),
           );
 
@@ -872,11 +928,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             });
           }
         },
-        icon: Icon(
-          Icons.add,
-          color: _appBarColor,
-          size: 20,
-        ),
+        icon: Icon(Icons.add, color: _appBarColor, size: 20),
         label: Text(
           'Add Subtasks',
           style: TextStyle(
@@ -932,7 +984,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   // Helper method to convert string priority to TaskPriority enum
   TaskPriority? _stringToPriority(String? priorityString) {
     if (priorityString == null) return null;
-    
+
     switch (priorityString.toLowerCase()) {
       case 'low':
         return TaskPriority.low;

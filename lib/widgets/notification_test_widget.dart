@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:aiassistant1/services/task_notification_service.dart';
-import 'package:aiassistant1/models/task.dart';
+import 'package:ai_clever_todo/services/task_notification_service.dart';
+import 'package:ai_clever_todo/models/task.dart';
 
 /// Widget to test the enhanced notification system
 class NotificationTestWidget extends StatefulWidget {
@@ -11,7 +11,8 @@ class NotificationTestWidget extends StatefulWidget {
 }
 
 class _NotificationTestWidgetState extends State<NotificationTestWidget> {
-  final TaskNotificationService _notificationService = TaskNotificationService();
+  final TaskNotificationService _notificationService =
+      TaskNotificationService();
   String _testStatus = 'Ready to test notifications';
   bool _isLoading = false;
 
@@ -27,7 +28,7 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
         body: 'This is a test immediate notification. Time: ${DateTime.now()}',
         payload: 'test_immediate',
       );
-      
+
       setState(() {
         _testStatus = '✅ Immediate notification sent successfully!';
       });
@@ -50,9 +51,10 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
 
     try {
       await _notificationService.testNotificationScheduling();
-      
+
       setState(() {
-        _testStatus = '✅ Test notifications scheduled! Check in 10-19 seconds.\n\nPut the app in background to test reliability.';
+        _testStatus =
+            '✅ Test notifications scheduled! Check in 10-19 seconds.\n\nPut the app in background to test reliability.';
       });
     } catch (e) {
       setState(() {
@@ -76,7 +78,8 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
       final testTask = Task(
         id: 'test_task_${DateTime.now().millisecondsSinceEpoch}',
         title: 'Test Task Notification',
-        description: 'This is a test task to verify notification scheduling works correctly.',
+        description:
+            'This is a test task to verify notification scheduling works correctly.',
         dueDate: DateTime.now().add(const Duration(seconds: 15)),
         priority: TaskPriority.high,
         category: 'test',
@@ -87,9 +90,10 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
       );
 
       await _notificationService.scheduleTaskNotification(testTask);
-      
+
       setState(() {
-        _testStatus = '✅ Task notification scheduled for 15 seconds!\n\nPut app in background to test. You should see multiple notifications with different strategies.';
+        _testStatus =
+            '✅ Task notification scheduled for 15 seconds!\n\nPut app in background to test. You should see multiple notifications with different strategies.';
       });
     } catch (e) {
       setState(() {
@@ -110,9 +114,10 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
 
     try {
       final status = await _notificationService.getSystemNotificationStatus();
-      
+
       setState(() {
-        _testStatus = 'System Status:\n${status.entries.map((e) => '${e.key}: ${e.value}').join('\n')}';
+        _testStatus =
+            'System Status:\n${status.entries.map((e) => '${e.key}: ${e.value}').join('\n')}';
       });
     } catch (e) {
       setState(() {
@@ -134,9 +139,10 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
     try {
       final count = await _notificationService.getPendingNotificationCount();
       final pending = await _notificationService.getPendingNotifications();
-      
+
       setState(() {
-        _testStatus = 'Pending Notifications: $count\n\n${pending.map((n) => 'ID: ${n.id}, Title: ${n.title}').join('\n')}';
+        _testStatus =
+            'Pending Notifications: $count\n\n${pending.map((n) => 'ID: ${n.id}, Title: ${n.title}').join('\n')}';
       });
     } catch (e) {
       setState(() {
@@ -170,61 +176,61 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
                   children: [
                     const Text(
                       'Enhanced Notification System Test',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      _testStatus,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    Text(_testStatus, style: const TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             ElevatedButton(
               onPressed: _isLoading ? null : _testImmediateNotification,
               child: const Text('Test Immediate Notification'),
             ),
             const SizedBox(height: 8),
-            
+
             ElevatedButton(
               onPressed: _isLoading ? null : _testScheduledNotification,
               child: const Text('Test Multi-Strategy Scheduling (10s)'),
             ),
             const SizedBox(height: 8),
-            
+
             ElevatedButton(
               onPressed: _isLoading ? null : _testTaskNotification,
               child: const Text('Test Task Notification (15s)'),
             ),
             const SizedBox(height: 16),
-            
+
             const Divider(),
             const SizedBox(height: 16),
-            
+
             ElevatedButton(
               onPressed: _isLoading ? null : _checkPermissions,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
               child: const Text('Check System Status'),
             ),
             const SizedBox(height: 8),
-            
+
             ElevatedButton(
               onPressed: _isLoading ? null : _getPendingNotifications,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: const Text('Check Pending Notifications'),
             ),
-            
+
             if (_isLoading)
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Center(child: CircularProgressIndicator()),
               ),
-              
+
             const Spacer(),
-            
+
             const Card(
               color: Colors.lightBlue,
               child: Padding(
@@ -234,7 +240,10 @@ class _NotificationTestWidgetState extends State<NotificationTestWidget> {
                   children: [
                     Text(
                       'Testing Instructions:',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     SizedBox(height: 8),
                     Text(

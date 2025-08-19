@@ -1,6 +1,6 @@
-import 'package:aiassistant1/screens/user_registration/signin.dart';
-import 'package:aiassistant1/services/google_sign.dart';
-import 'package:aiassistant1/widgets/build_text_field.dart';
+import 'package:ai_clever_todo/screens/user_registration/signin.dart';
+import 'package:ai_clever_todo/services/google_sign.dart';
+import 'package:ai_clever_todo/widgets/build_text_field.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -39,9 +39,7 @@ class _SignUpPageState extends State<SignUpPage> {
       // Disabled in demo build: no account creation
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sign up disabled in demo build.'),
-        ),
+        const SnackBar(content: Text('Sign up disabled in demo build.')),
       );
     } finally {
       if (mounted) {

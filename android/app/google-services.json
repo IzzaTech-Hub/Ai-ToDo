@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:126453952717:android:8798ff86b71730b5b43984",
         "android_client_info": {
-          "package_name": "com.example.aiassistant1"
+          "package_name": "com.example.ai_clever_todo"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "126453952717-dbdfdlgcfueoj7piasjna7nkdgk6obmk.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.aiassistant1"
+                "bundle_id": "com.example.ai_clever_todo"
               }
             }
           ]

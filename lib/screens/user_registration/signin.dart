@@ -1,8 +1,8 @@
-import 'package:aiassistant1/screens/home_screen.dart';
-import 'package:aiassistant1/screens/user_registration/forgot_pass.dart';
-import 'package:aiassistant1/screens/user_registration/signup.dart';
-import 'package:aiassistant1/services/google_sign.dart';
-import 'package:aiassistant1/widgets/build_text_field.dart';
+import 'package:ai_clever_todo/screens/home_screen.dart';
+import 'package:ai_clever_todo/screens/user_registration/forgot_pass.dart';
+import 'package:ai_clever_todo/screens/user_registration/signup.dart';
+import 'package:ai_clever_todo/services/google_sign.dart';
+import 'package:ai_clever_todo/widgets/build_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

@@ -1,8 +1,9 @@
 import 'package:flutter/services.dart';
 
 class AndroidNotificationHelper {
-  static const MethodChannel _channel = 
-      MethodChannel('com.example.aiassistant1/notifications');
+  static const MethodChannel _channel = MethodChannel(
+    'com.example.ai_clever_todo/notifications',
+  );
 
   /// Clear any corrupted notification data that might cause TypeToken issues
   static Future<void> clearCorruptedNotifications() async {
@@ -16,7 +17,9 @@ class AndroidNotificationHelper {
   /// Get the count of currently scheduled notifications
   static Future<int> getScheduledNotificationCount() async {
     try {
-      final count = await _channel.invokeMethod('getScheduledNotificationCount');
+      final count = await _channel.invokeMethod(
+        'getScheduledNotificationCount',
+      );
       return count ?? 0;
     } catch (e) {
       print('Failed to get notification count: $e');

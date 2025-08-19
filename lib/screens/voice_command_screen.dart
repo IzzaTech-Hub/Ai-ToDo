@@ -1,3 +1,4 @@
+import 'package:api_key_pool/api_key_pool.dart';
 import 'package:flutter/material.dart';
 import '../services/connectivity_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -131,8 +132,10 @@ class _VoiceCommandScreenState extends State<VoiceCommandScreen> {
       });
 
       // Make the AI API call
+    final apiKey = ApiKeyPool.getKey();
+
       final response = await http.post(
-        Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${dotenv.env['GEMINI_API_KEY']}'),
+        Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey'),
         headers: {
           'Content-Type': 'application/json',
         },

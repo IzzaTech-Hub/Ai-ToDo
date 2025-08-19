@@ -1,6 +1,6 @@
 {
-    "name": "aiassistant1",
-    "short_name": "aiassistant1",
+    "name": "ai_clever_todo",
+    "short_name": "ai_clever_todo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

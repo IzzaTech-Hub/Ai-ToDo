@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aiassistant1/models/task.dart';
-import 'package:aiassistant1/services/notification_service.dart';
+import 'package:ai_clever_todo/models/task.dart';
+import 'package:ai_clever_todo/services/notification_service.dart';
 
 enum TaskSortOption { dueDate, priority, title, category }
 
@@ -18,8 +18,10 @@ class TaskService {
     required bool isArchived,
     bool? isReminder, // Null for all, true for reminders, false for tasks
   }) {
-    print('🚀 TaskService.getTasksStream called with userId: $userId, isArchived: $isArchived, isReminder: $isReminder');
-    
+    print(
+      '🚀 TaskService.getTasksStream called with userId: $userId, isArchived: $isArchived, isReminder: $isReminder',
+    );
+
     Query query = _firestore
         .collection(_collection)
         .where('userId', isEqualTo: userId)
@@ -39,56 +41,75 @@ class TaskService {
     query = query.orderBy('dueDate');
 
     // Temporarily remove orderBy to test if it's causing indexing issues
-    return query.snapshots().handleError((error) {
-      print('🔥 Firestore Stream Error in getTasksStream: $error');
-      
-      // Check if it's a missing index error
-      if (error.toString().contains('failed-precondition') || 
-          error.toString().contains('index') ||
-          error.toString().contains('The query requires an index')) {
-        
-        // Extract the index creation URL if available
-        final match = RegExp(r'https://console\.firebase\.google\.com[^\s]+')
-            .firstMatch(error.toString());
-        if (match != null) {
-          print('👉 CREATE MISSING FIRESTORE INDEX HERE: ${match.group(0)}');
-        } else {
-          print('👉 You need to create a Firestore composite index for this query.');
-          print('   Query: userId + isArchived + isReminder + orderBy(dueDate)');
-          print('   Go to Firebase Console > Firestore > Indexes to create it.');
-        }
-      }
-      throw error;
-    }).map((snapshot) {
-      final allDocs = snapshot.docs;
-      print('📊 Raw Firestore docs found: ${allDocs.length}');
-      
-      final tasks = allDocs
-          .map(
-            (doc) {
-              try {
-                final task = Task.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-                print('   📋 Raw task: "${task.title}" - isArchived: ${task.isArchived}, isCompleted: ${task.isCompleted}, isReminder: ${task.isReminder}');
-                return task;
-              } catch (e) {
-                print('   ❌ Error parsing task ${doc.id}: $e');
-                return null;
-              }
-            }
-          )
-          .where((task) => task != null)
-          .cast<Task>()
-          .toList();
+    return query
+        .snapshots()
+        .handleError((error) {
+          print('🔥 Firestore Stream Error in getTasksStream: $error');
 
-      print(' TaskService.getTasksStream: Found ${tasks.length} filtered tasks for userId: $userId, isArchived: $isArchived, isReminder: $isReminder');
-      return tasks;
-    });
+          // Check if it's a missing index error
+          if (error.toString().contains('failed-precondition') ||
+              error.toString().contains('index') ||
+              error.toString().contains('The query requires an index')) {
+            // Extract the index creation URL if available
+            final match = RegExp(
+              r'https://console\.firebase\.google\.com[^\s]+',
+            ).firstMatch(error.toString());
+            if (match != null) {
+              print(
+                '👉 CREATE MISSING FIRESTORE INDEX HERE: ${match.group(0)}',
+              );
+            } else {
+              print(
+                '👉 You need to create a Firestore composite index for this query.',
+              );
+              print(
+                '   Query: userId + isArchived + isReminder + orderBy(dueDate)',
+              );
+              print(
+                '   Go to Firebase Console > Firestore > Indexes to create it.',
+              );
+            }
+          }
+          throw error;
+        })
+        .map((snapshot) {
+          final allDocs = snapshot.docs;
+          print('📊 Raw Firestore docs found: ${allDocs.length}');
+
+          final tasks =
+              allDocs
+                  .map((doc) {
+                    try {
+                      final task = Task.fromMap(
+                        doc.id,
+                        doc.data() as Map<String, dynamic>,
+                      );
+                      print(
+                        '   📋 Raw task: "${task.title}" - isArchived: ${task.isArchived}, isCompleted: ${task.isCompleted}, isReminder: ${task.isReminder}',
+                      );
+                      return task;
+                    } catch (e) {
+                      print('   ❌ Error parsing task ${doc.id}: $e');
+                      return null;
+                    }
+                  })
+                  .where((task) => task != null)
+                  .cast<Task>()
+                  .toList();
+
+          print(
+            ' TaskService.getTasksStream: Found ${tasks.length} filtered tasks for userId: $userId, isArchived: $isArchived, isReminder: $isReminder',
+          );
+          return tasks;
+        });
   }
 
   // Create a new task
   Future<Task> createTask(Task task) async {
     try {
-      print('Creating task: ${task.title} for user: ${task.userId}'); // Debug log
+      print(
+        'Creating task: ${task.title} for user: ${task.userId}',
+      ); // Debug log
       DocumentReference docRef = await _firestore
           .collection(_collection)
           .add(task.toMap());

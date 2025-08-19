@@ -1,4 +1,4 @@
-# aiassistant1
+# ai_clever_todo
 
 A new Flutter project.
 

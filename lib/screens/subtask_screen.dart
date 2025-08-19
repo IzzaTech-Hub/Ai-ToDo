@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:aiassistant1/models/subtask.dart';
+import 'package:ai_clever_todo/models/subtask.dart';
 
 class SubtaskScreen extends StatefulWidget {
   final List<Subtask> existingSubtasks;
@@ -44,7 +44,13 @@ class _SubtaskScreenState extends State<SubtaskScreen> {
       );
       if (time != null) {
         setState(() {
-          _deadline = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+          _deadline = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute,
+          );
         });
       }
     }
@@ -92,17 +98,25 @@ class _SubtaskScreenState extends State<SubtaskScreen> {
                   children: [
                     TextFormField(
                       controller: _titleController,
-                      decoration: const InputDecoration(labelText: 'Subtask Title'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter a title' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Subtask Title',
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Enter a title'
+                                  : null,
                     ),
                     TextFormField(
                       controller: _descriptionController,
-                      decoration: const InputDecoration(labelText: 'Subtask Description'),
+                      decoration: const InputDecoration(
+                        labelText: 'Subtask Description',
+                      ),
                     ),
                     ListTile(
                       title: Text(
-                          'Deadline: ${DateFormat('MMM dd, yyyy HH:mm').format(_deadline)}'),
+                        'Deadline: ${DateFormat('MMM dd, yyyy HH:mm').format(_deadline)}',
+                      ),
                       trailing: const Icon(Icons.calendar_today),
                       onTap: _pickDeadline,
                     ),

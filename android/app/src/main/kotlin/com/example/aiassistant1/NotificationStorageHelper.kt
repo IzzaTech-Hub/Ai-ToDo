@@ -1,4 +1,4 @@
-package com.example.aiassistant1
+package com.example.ai_clever_todo
 
 import android.content.Context
 import android.content.SharedPreferences

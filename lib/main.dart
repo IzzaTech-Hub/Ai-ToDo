@@ -1,23 +1,25 @@
-import 'package:aiassistant1/firebase_options.dart';
-import 'package:aiassistant1/screens/home_screen.dart';
-// import 'package:aiassistant1/screens/user_registration/signin.dart';
+import 'package:ai_clever_todo/firebase_options.dart';
+import 'package:ai_clever_todo/screens/home_screen.dart';
+import 'package:api_key_pool/api_key_pool.dart';
+// import 'package:ai_clever_todo/screens/user_registration/signin.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// import 'package:aiassistant1/services/notification_service.dart';
-// import 'package:aiassistant1/services/task_notification_service.dart';
-// import 'package:aiassistant1/services/task_notification_integration.dart';
-// import 'package:aiassistant1/services/boot_notification_service.dart';
-import 'package:aiassistant1/services/settings_service.dart';
+// import 'package:ai_clever_todo/services/notification_service.dart';
+// import 'package:ai_clever_todo/services/task_notification_service.dart';
+// import 'package:ai_clever_todo/services/task_notification_integration.dart';
+// import 'package:ai_clever_todo/services/boot_notification_service.dart';
+import 'package:ai_clever_todo/services/settings_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Notifications disabled for demo release
-  
+  ApiKeyPool.init('Ai-Todo');
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => SettingsService(),
@@ -28,14 +30,15 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   // Global navigator key for notifications
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     // NotificationService disabled for demo release
-    
+
     return Consumer<SettingsService>(
       builder: (context, settings, child) {
         return MaterialApp(

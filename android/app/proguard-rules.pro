@@ -91,8 +91,8 @@
 -keep class * extends java.lang.reflect.ParameterizedType { *; }
 
 # Keep our custom notification helper
--keep class com.example.aiassistant1.NotificationStorageHelper { *; }
--keep class com.example.aiassistant1.ScheduledNotificationModel { *; }
+-keep class com.example.ai_clever_todo.NotificationStorageHelper { *; }
+-keep class com.example.ai_clever_todo.ScheduledNotificationModel { *; }
 
 # Permissions handler
 -keep class com.baseflow.permissionhandler.** { *; }

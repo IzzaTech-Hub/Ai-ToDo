@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:aiassistant1/models/task.dart';
-import 'package:aiassistant1/services/task_services.dart';
-import 'package:aiassistant1/screens/create_task_screen.dart';
-import 'package:aiassistant1/screens/calendar_screen.dart';
-import 'package:aiassistant1/screens/settings_screen.dart';
-import 'package:aiassistant1/screens/ai_task_creation_screen.dart';
-import 'package:aiassistant1/screens/voice_task_creation_screen.dart';
+import 'package:ai_clever_todo/models/task.dart';
+import 'package:ai_clever_todo/services/task_services.dart';
+import 'package:ai_clever_todo/screens/create_task_screen.dart';
+import 'package:ai_clever_todo/screens/calendar_screen.dart';
+import 'package:ai_clever_todo/screens/settings_screen.dart';
+import 'package:ai_clever_todo/screens/ai_task_creation_screen.dart';
+import 'package:ai_clever_todo/screens/voice_task_creation_screen.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -63,11 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(_getAppBarTitle()),
         automaticallyImplyLeading: true,
       ),
-      body: _selectedIndex == 0
-          ? TasksView(key: ValueKey(_currentFilter), filter: _currentFilter)
-          : _selectedIndex == 1
-          ? const CalendarScreen()
-          : const SettingsScreen(),
+      body:
+          _selectedIndex == 0
+              ? TasksView(key: ValueKey(_currentFilter), filter: _currentFilter)
+              : _selectedIndex == 1
+              ? const CalendarScreen()
+              : const SettingsScreen(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -131,96 +132,97 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: _selectedIndex == 0
-          ? SpeedDial(
-              icon: Icons.add,
-              activeIcon: Icons.close,
-              backgroundColor: Colors.deepPurple,
-              foregroundColor: Colors.white,
-              spacing: 16,
-              spaceBetweenChildren: 16,
-              overlayColor: Colors.black,
-              overlayOpacity: 0.5,
-              elevation: 8,
-              animationCurve: Curves.elasticInOut,
-              animationDuration: const Duration(milliseconds: 300),
-              children: [
-                SpeedDialChild(
-                  child: const Icon(Icons.edit),
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  label: 'Manual Task',
-                  labelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateTaskScreen(),
-                      ),
-                    );
-                  },
-                ),
-                SpeedDialChild(
-                  child: const Icon(Icons.message),
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                  label: 'Quick AI Task',
-                  labelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AITaskCreationScreen(),
-                      ),
-                    );
-                    
-                    // Handle returned task data from AI creation
-                    if (result != null && result is Map<String, dynamic>) {
-                      // Navigate to CreateTaskScreen with the AI-generated data
+      floatingActionButton:
+          _selectedIndex == 0
+              ? SpeedDial(
+                icon: Icons.add,
+                activeIcon: Icons.close,
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+                spacing: 16,
+                spaceBetweenChildren: 16,
+                overlayColor: Colors.black,
+                overlayOpacity: 0.5,
+                elevation: 8,
+                animationCurve: Curves.elasticInOut,
+                animationDuration: const Duration(milliseconds: 300),
+                children: [
+                  SpeedDialChild(
+                    child: const Icon(Icons.edit),
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    label: 'Manual Task',
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onTap: () async {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreateTaskScreen(
-                            aiGeneratedData: result,
-                          ),
+                          builder: (context) => const CreateTaskScreen(),
                         ),
                       );
-                      
-                      // If task was created successfully, the StreamBuilder will refresh automatically
-                    }
-                  },
-                ),
-                SpeedDialChild(
-                  child: const Icon(Icons.mic),
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                  label: 'Voice Task',
-                  labelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    },
                   ),
-                  onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const VoiceTaskCreationScreen(),
-                      ),
-                    );
-                    // Refresh if task was created
-                    if (result == true) {
-                      // The StreamBuilder will automatically refresh
-                    }
-                  },
-                ),
-              ],
-            )
-          : null,
+                  SpeedDialChild(
+                    child: const Icon(Icons.message),
+                    backgroundColor: Colors.purple,
+                    foregroundColor: Colors.white,
+                    label: 'Quick AI Task',
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AITaskCreationScreen(),
+                        ),
+                      );
+
+                      // Handle returned task data from AI creation
+                      if (result != null && result is Map<String, dynamic>) {
+                        // Navigate to CreateTaskScreen with the AI-generated data
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    CreateTaskScreen(aiGeneratedData: result),
+                          ),
+                        );
+
+                        // If task was created successfully, the StreamBuilder will refresh automatically
+                      }
+                    },
+                  ),
+                  SpeedDialChild(
+                    child: const Icon(Icons.mic),
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    label: 'Voice Task',
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const VoiceTaskCreationScreen(),
+                        ),
+                      );
+                      // Refresh if task was created
+                      if (result == true) {
+                        // The StreamBuilder will automatically refresh
+                      }
+                    },
+                  ),
+                ],
+              )
+              : null,
     );
   }
 }
@@ -254,16 +256,18 @@ class _TasksViewState extends State<TasksView> {
         content: Row(
           children: [
             Icon(
-              newCompletionStatus ? Icons.check_circle : Icons.radio_button_unchecked,
+              newCompletionStatus
+                  ? Icons.check_circle
+                  : Icons.radio_button_unchecked,
               color: Colors.white,
               size: 20,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                newCompletionStatus 
-                  ? 'Task marked as completed' 
-                  : 'Task marked as incomplete',
+                newCompletionStatus
+                    ? 'Task marked as completed'
+                    : 'Task marked as incomplete',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -272,7 +276,8 @@ class _TasksViewState extends State<TasksView> {
             ),
           ],
         ),
-        backgroundColor: newCompletionStatus ? Colors.green[600] : Colors.orange[600],
+        backgroundColor:
+            newCompletionStatus ? Colors.green[600] : Colors.orange[600],
         duration: const Duration(seconds: 4),
         behavior: SnackBarBehavior.fixed,
         shape: const RoundedRectangleBorder(
@@ -290,17 +295,13 @@ class _TasksViewState extends State<TasksView> {
               await _taskService.updateTask(
                 task.copyWith(isCompleted: task.isCompleted),
               );
-              
+
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Row(
                       children: [
-                        const Icon(
-                          Icons.undo,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        const Icon(Icons.undo, color: Colors.white, size: 20),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -347,11 +348,7 @@ class _TasksViewState extends State<TasksView> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(
-                  Icons.error,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                const Icon(Icons.error, color: Colors.white, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -569,326 +566,337 @@ class _TasksViewState extends State<TasksView> {
   Future<void> _showTaskOptionsDialog(Task task) async {
     return showDialog<void>(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.task_alt,
-                color: Colors.blue,
-                size: 24,
-              ),
+      builder:
+          (BuildContext context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Text(
-                'Task Options',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'What would you like to do with this task?',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.blue.withOpacity(0.2),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                '${task.title}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Archive option
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                _showConfirmationDialog(
-                  title: 'Archive Task',
-                  content: 'Are you sure you want to archive "${task.title}"? You can restore it later from the archived section.',
-                  confirmText: 'Archive',
-                  onConfirm: () async {
-                    try {
-                      await _taskService.archiveTask(task.id!);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                const Icon(Icons.archive, color: Colors.white, size: 20),
-                                const SizedBox(width: 12),
-                                const Expanded(
-                                  child: Text(
-                                    'Task archived successfully',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            backgroundColor: Colors.orange[600],
-                            duration: const Duration(seconds: 3),
-                            behavior: SnackBarBehavior.fixed,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to archive task: $e'),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.fixed,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                );
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.orange.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.archive_outlined,
-                      color: Colors.orange[600],
-                      size: 22,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Archive Task',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.orange[700],
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Move to archived section',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.orange[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.orange[600],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 12),
-            
-            // Delete option
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-                _showConfirmationDialog(
-                  title: 'Delete Task',
-                  content: 'Are you sure you want to permanently delete "${task.title}"? This action cannot be undone.',
-                  confirmText: 'Delete',
-                  onConfirm: () async {
-                    try {
-                      await _taskService.deleteTaskPermanently(task.id!);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                const Icon(Icons.delete_forever, color: Colors.white, size: 20),
-                                const SizedBox(width: 12),
-                                const Expanded(
-                                  child: Text(
-                                    'Task deleted permanently',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            backgroundColor: Colors.red[600],
-                            duration: const Duration(seconds: 3),
-                            behavior: SnackBarBehavior.fixed,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Failed to delete task: $e'),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.fixed,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                );
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.red.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_forever_outlined,
-                      color: Colors.red[600],
-                      size: 22,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Delete Task',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.red[700],
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Delete permanently',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.red[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Colors.red[600],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Cancel button
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                ),
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                  child: const Icon(
+                    Icons.task_alt,
+                    color: Colors.blue,
+                    size: 24,
                   ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Task Options',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'What would you like to do with this task?',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.blue.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    '${task.title}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Archive option
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showConfirmationDialog(
+                      title: 'Archive Task',
+                      content:
+                          'Are you sure you want to archive "${task.title}"? You can restore it later from the archived section.',
+                      confirmText: 'Archive',
+                      onConfirm: () async {
+                        try {
+                          await _taskService.archiveTask(task.id!);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.archive,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                      child: Text(
+                                        'Task archived successfully',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: Colors.orange[600],
+                                duration: const Duration(seconds: 3),
+                                behavior: SnackBarBehavior.fixed,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to archive task: $e'),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.fixed,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.orange.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.archive_outlined,
+                          color: Colors.orange[600],
+                          size: 22,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Archive Task',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.orange[700],
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Move to archived section',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.orange[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.orange[600],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Delete option
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showConfirmationDialog(
+                      title: 'Delete Task',
+                      content:
+                          'Are you sure you want to permanently delete "${task.title}"? This action cannot be undone.',
+                      confirmText: 'Delete',
+                      onConfirm: () async {
+                        try {
+                          await _taskService.deleteTaskPermanently(task.id!);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.delete_forever,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                      child: Text(
+                                        'Task deleted permanently',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                backgroundColor: Colors.red[600],
+                                duration: const Duration(seconds: 3),
+                                behavior: SnackBarBehavior.fixed,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to delete task: $e'),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.fixed,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.red.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.delete_forever_outlined,
+                          color: Colors.red[600],
+                          size: 22,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Delete Task',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.red[700],
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Delete permanently',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.red[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.red[600],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Cancel button
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
     );
   }
 
@@ -1009,7 +1017,7 @@ class _TasksViewState extends State<TasksView> {
                       size: 16.0,
                       color: Colors.blueAccent,
                     ),
-                  if (isCompletedView || isArchivedView) 
+                  if (isCompletedView || isArchivedView)
                     _buildTaskActions(task, isCompletedView, isArchivedView),
                 ],
               ),
@@ -1020,7 +1028,11 @@ class _TasksViewState extends State<TasksView> {
     );
   }
 
-  Widget _buildTaskActions(Task task, bool isCompletedView, bool isArchivedView) {
+  Widget _buildTaskActions(
+    Task task,
+    bool isCompletedView,
+    bool isArchivedView,
+  ) {
     if (isCompletedView) {
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -1083,11 +1095,7 @@ class _TasksViewState extends State<TasksView> {
             customBorder: const CircleBorder(),
             child: Container(
               padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.undo,
-                size: 20,
-                color: Colors.blue[600],
-              ),
+              child: Icon(Icons.undo, size: 20, color: Colors.blue[600]),
             ),
           ),
           const SizedBox(width: 4),
@@ -1096,7 +1104,8 @@ class _TasksViewState extends State<TasksView> {
             onTap: () {
               _showConfirmationDialog(
                 title: 'Delete Task',
-                content: 'Are you sure you want to permanently delete this completed task? This action cannot be undone.',
+                content:
+                    'Are you sure you want to permanently delete this completed task? This action cannot be undone.',
                 confirmText: 'Delete',
                 onConfirm: () async {
                   try {
@@ -1106,7 +1115,11 @@ class _TasksViewState extends State<TasksView> {
                         SnackBar(
                           content: Row(
                             children: [
-                              const Icon(Icons.check, color: Colors.white, size: 20),
+                              const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
@@ -1177,7 +1190,11 @@ class _TasksViewState extends State<TasksView> {
                     SnackBar(
                       content: Row(
                         children: [
-                          const Icon(Icons.unarchive, color: Colors.white, size: 20),
+                          const Icon(
+                            Icons.unarchive,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
@@ -1223,11 +1240,7 @@ class _TasksViewState extends State<TasksView> {
             customBorder: const CircleBorder(),
             child: Container(
               padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.unarchive,
-                size: 20,
-                color: Colors.green[600],
-              ),
+              child: Icon(Icons.unarchive, size: 20, color: Colors.green[600]),
             ),
           ),
           const SizedBox(width: 4),
@@ -1236,7 +1249,8 @@ class _TasksViewState extends State<TasksView> {
             onTap: () {
               _showConfirmationDialog(
                 title: 'Delete Task',
-                content: 'Are you sure you want to permanently delete this archived task? This action cannot be undone.',
+                content:
+                    'Are you sure you want to permanently delete this archived task? This action cannot be undone.',
                 confirmText: 'Delete',
                 onConfirm: () async {
                   try {
@@ -1246,7 +1260,11 @@ class _TasksViewState extends State<TasksView> {
                         SnackBar(
                           content: Row(
                             children: [
-                              const Icon(Icons.check, color: Colors.white, size: 20),
+                              const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
